@@ -36,4 +36,9 @@ public class UserService {
             userRepository.save(user);
         });
     }
+
+    //intégration BLE
+    public Optional<User> getUserByNom(String nom) {
+        return userRepository.findByNom(nom);
+    }
 }
