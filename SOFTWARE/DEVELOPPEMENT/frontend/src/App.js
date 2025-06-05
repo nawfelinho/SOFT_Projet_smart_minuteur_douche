@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
 
 function App() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/users")
+        .then(response => response.json())
+        .then(data => setUsers(data))
+        .catch(error => console.error("Erreur lors du chargement des utilisateurs :", error));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div style={{ padding: '2rem' }}>
+        <h1>Liste des utilisateurs</h1>
+        {users.length === 0 ? (
+            <p>Aucun utilisateur trouvé.</p>
+        ) : (
+            <ul>
+              {users.map(user => (
+                  <li key={user.id}>
+                    {user.prenom} {user.nom} — Temps total : {user.tempsTotal} sec
+                  </li>
+              ))}
+            </ul>
+        )}
+      </div>
   );
 }
 
