@@ -57,7 +57,7 @@ def notification_handler(sender, data):
         except Exception as e:
             print("❌ Erreur HTTP vers backend :", e)
 
-                
+
 # === CONNEXION ET ABONNEMENT AUX NOTIFICATIONS BLE ===
 async def connect_ble():
     """
