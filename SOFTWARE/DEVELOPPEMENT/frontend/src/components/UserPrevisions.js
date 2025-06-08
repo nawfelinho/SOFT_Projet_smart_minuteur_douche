@@ -221,6 +221,41 @@ function UserPrevisions() {
         </div>
     );
 
+    // ---- Section Bilan Annuel (avec logique conditionnelle JS) ----
+    const allGainsAreZeroOrNegative =
+        gain.litres <= 0 &&
+        gain.kwh <= 0 &&
+        gain.euros <= 0 &&
+        gain.co2 <= 0;
+
+    const bilanAnnuel = (
+        <div style={{
+            background: "#eaf8f6", borderRadius: "10px", padding: "2rem", marginTop: "40px", marginBottom: "50px"
+        }}>
+            <h3>📋 Bilan annuel de vos douches</h3>
+            <p>
+                Avec votre consommation de douches actuelles, vous atteindrez dans un an :
+                <br/>🚿 <b>{totalUser.litres}</b> litres d’eau consommés
+                <br/>⚡ <b>{totalUser.kwh}</b> kWh d’énergie consommés
+                <br/>💶 <b>{totalUser.euros}</b> € de dépense estimée
+                <br/>🌍 <b>{totalUser.co2}</b> kgCO₂ émis
+            </p>
+            {allGainsAreZeroOrNegative ? (
+                <p style={{color: "#1a9c32", fontWeight: "bold", marginTop: 20}}>
+                    Bravo, votre consommation est déjà inférieure à la recommandation de l’OMS, gardez vos bonnes habitudes !
+                </p>
+            ) : (
+                <p>
+                    <b>Par contre, en atteignant l'objectif des 5 min recommandées par l’OMS, vous pourriez économiser :</b>
+                    <br/>🚿 <b>{gain.litres}</b> litres d’eau
+                    <br/>⚡ <b>{gain.kwh}</b> kWh d’énergie
+                    <br/>💶 <b>{gain.euros}</b> €
+                    <br/>🌍 <b>{gain.co2}</b> kgCO₂
+                </p>
+            )}
+        </div>
+    );
+
     return (
         <div>
             <button onClick={() => navigate(`/user/${id}`)} style={{marginBottom: '14px'}}>Retour à la page utilisateur</button>
@@ -288,26 +323,7 @@ function UserPrevisions() {
                 "#8c52ff", "#47b247"
             )}
 
-            {/* Texte d'interprétation */}
-            <div style={{
-                background: "#eaf8f6", borderRadius: "10px", padding: "2rem", marginTop: "40px", marginBottom: "50px"
-            }}>
-                <h3>📋 Bilan annuel de vos douches</h3>
-                <p>
-                    Avec votre consommation de douches actuelles, vous atteindrez dans un an :
-                    <br/>🚿 <b>{totalUser.litres}</b> litres d’eau consommés
-                    <br/>⚡ <b>{totalUser.kwh}</b> kWh d’énergie consommés
-                    <br/>💶 <b>{totalUser.euros}</b> € de dépense estimée
-                    <br/>🌍 <b>{totalUser.co2}</b> kgCO₂ émis
-                </p>
-                <p>
-                    <b>Par contre, en atteignant l'objectif des 5 min recommandées par l’OMS, vous pourriez économiser :</b>
-                    <br/>🚿 <b>{gain.litres}</b> litres d’eau
-                    <br/>⚡ <b>{gain.kwh}</b> kWh d’énergie
-                    <br/>💶 <b>{gain.euros}</b> €
-                    <br/>🌍 <b>{gain.co2}</b> kgCO₂
-                </p>
-            </div>
+            {bilanAnnuel}
         </div>
     );
 }
