@@ -40,7 +40,7 @@ function UserDouches() {
     const formatTemps = (seconds) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
-        return `${m}min ${s}s`;
+        return `${m}min ${s < 10 ? "0" : ""}${s}s`;
     };
 
     const moyenneGlissante = (data, windowSize = 3) => {
@@ -49,11 +49,85 @@ function UserDouches() {
             const start = Math.max(0, i - windowSize + 1);
             const window = data.slice(start, i + 1);
             const moyenne = window.reduce((a, b) => a + b, 0) / window.length;
-            res.push(moyenne);
+            res.push(Math.round(moyenne));
         }
         return res;
     };
 
+    const DUREE_OBJECTIF = 300; // 5 min = 300s
+
+    function objectifProchaineDouche() {
+        if (douches.length === 0) {
+            return (
+                <div style={{
+                    background: "#f8f8f8", borderRadius: "7px", padding: "12px 16px", margin: "22px 0 22px 0"
+                }}>
+                    <p style={{marginBottom: 4, fontSize: "1rem"}}>
+                        <b>Le temps moyen d'une douche recommandé par l’OMS (Organisation mondiale de la santé) est d’environ 5 minutes.</b>
+                    </p>
+                    <p style={{margin: 0}}>
+                        <b>Objectif de temps de la prochaine douche :</b><br />
+                        Vous n'avez pas encore démarré de douches, essayez de prendre de bonnes habitudes ! Pour votre première douche, essayez d'atteindre l'objectif suivant : <b>5 min</b>
+                    </p>
+                </div>
+            );
+        }
+        const moyenne = userStats.moyenne;
+        if (moyenne <= DUREE_OBJECTIF) {
+            return (
+                <div style={{
+                    background: "#f8f8f8", borderRadius: "7px", padding: "12px 16px", margin: "22px 0 22px 0"
+                }}>
+                    <p style={{marginBottom: 4, fontSize: "1rem"}}>
+                        <b>Le temps moyen d'une douche recommandé par l’OMS (Organisation mondiale de la santé) est d’environ 5 minutes.</b>
+                    </p>
+                    <p style={{margin: 0}}>
+                        <b>Objectif de temps de la prochaine douche :</b><br />
+                        Super, vous avez atteint l'objectif recommandé, gardez vos bonnes habitudes ! Pour la prochaine douche, essayez d'atteindre l'objectif suivant : <b>5 min</b>
+                    </p>
+                </div>
+            );
+        }
+        // Utilisateur au-dessus de 5 min
+        const last3 = douches.slice(-3).map(d => d.duree);
+        const moy3 = last3.length ? last3.reduce((a, b) => a + b, 0) / last3.length : moyenne;
+        let objReduit = Math.max(moy3 * 0.90, 300); // -10%, au minimum 5min
+        // Limite la chute brutale d’un coup
+        const last = douches[douches.length - 1].duree;
+        if (last - objReduit > 30) objReduit = last - 30;
+        objReduit = Math.round(objReduit);
+
+        if (objReduit <= 330) {
+            return (
+                <div style={{
+                    background: "#f8f8f8", borderRadius: "7px", padding: "12px 16px", margin: "22px 0 22px 0"
+                }}>
+                    <p style={{marginBottom: 4, fontSize: "1rem"}}>
+                        <b>Le temps moyen d'une douche recommandé par l’OMS (Organisation mondiale de la santé) est d’environ 5 minutes.</b>
+                    </p>
+                    <p style={{margin: 0}}>
+                        <b>Objectif de temps de la prochaine douche :</b><br />
+                        Bravo, vous vous rapprochez de l'objectif ! Essayez d’atteindre ou de maintenir 5 minutes à chaque douche.
+                    </p>
+                </div>
+            );
+        }
+        return (
+            <div style={{
+                background: "#f8f8f8", borderRadius: "7px", padding: "12px 16px", margin: "22px 0 22px 0"
+            }}>
+                <p style={{marginBottom: 4, fontSize: "1rem"}}>
+                    <b>Le temps moyen d'une douche recommandé par l’OMS (Organisation mondiale de la santé) est d’environ 5 minutes.</b>
+                </p>
+                <p style={{margin: 0}}>
+                    <b>Objectif de temps de la prochaine douche :</b><br />
+                    Vous êtes sur la bonne voie ! Pour votre prochaine douche, essayez d’atteindre l’objectif suivant : <b>{formatTemps(objReduit)}</b>
+                </p>
+            </div>
+        );
+    }
+
+    // Graphiques
     const durees = douches.map(d => d.duree);
     const labels = douches.map((_, i) => `Douche ${i + 1}`);
     const moyennes = moyenneGlissante(durees);
@@ -112,9 +186,11 @@ function UserDouches() {
                 </p>
             </div>
 
-            <h2>📉 Évolution des durées de douche</h2>
-            <div style={{ width: '90%', height: '400px', margin: 'auto' }}>
-                <Line data={chartData} options={chartOptions} />
+            {objectifProchaineDouche()}
+
+            <h2><span role="img" aria-label="courbe">📉</span> Évolution des durées de douche</h2>
+            <div style={{width: '90%', height: '400px', margin: 'auto'}}>
+                <Line data={chartData} options={chartOptions}/>
             </div>
 
             <div style={{backgroundColor: '#e8f6fe', padding: '1.5rem', borderRadius: '10px', marginBottom: '2rem'}}>
@@ -132,33 +208,33 @@ function UserDouches() {
             </div>
 
             <h2>🔮 Prévisions</h2>
-
-            {douches.length < 5 && (
-                <p style={{color: '#666', fontStyle: 'italic', marginBottom: '10px'}}>
+            {douches.length < 5 ? (
+                <div style={{
+                    backgroundColor: '#f6f6f6', padding: '15px', borderRadius: '8px',
+                    color: '#999', position: 'relative', marginBottom: 16
+                }}>
+                    <span role="img" aria-label="lock" style={{
+                        position: 'absolute', top: 10, right: 15, fontSize: '24px'
+                    }}>🔒</span>
                     Faites au moins cinq douches pour débloquer les prévisions.
-                </p>
-            )}
-
-            <div style={{
-                backgroundColor: '#f6f6f6',
-                padding: '15px',
-                borderRadius: '8px',
-                filter: douches.length < 5 ? 'blur(2px)' : 'none',
-                position: 'relative'
-            }}>
-                <span
-                    role="img"
-                    aria-label="lock"
+                </div>
+            ) : (
+                <button
                     style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 15,
-                        fontSize: '24px',
-                        display: douches.length < 5 ? 'inline' : 'none'
+                        padding: "10px 25px",
+                        background: "#009ee0",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "1.1rem",
+                        cursor: "pointer",
+                        marginBottom: 18
                     }}
-                >🔒</span>
-                <p>Ici seront affichées des prévisions intelligentes sur vos futures douches.</p>
-            </div>
+                    onClick={() => navigate(`/user/${id}/previsions`)}
+                >
+                    Accéder aux prévisions
+                </button>
+            )}
 
             <h2>📊 Données détaillées des douches</h2>
             <table border="1" cellPadding="6">

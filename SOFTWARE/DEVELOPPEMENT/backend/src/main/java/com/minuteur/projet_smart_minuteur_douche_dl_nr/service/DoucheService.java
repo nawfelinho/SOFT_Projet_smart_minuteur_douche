@@ -8,23 +8,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DoucheService {
 
-    @Autowired
-    private DoucheRepository doucheRepository;
+    private final DoucheRepository doucheRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    public DoucheService(DoucheRepository doucheRepository, UserRepository userRepository) {
+        this.doucheRepository = doucheRepository;
+        this.userRepository = userRepository;
+    }
 
-    public Douche saveDouche(Douche douche) {
+    public Douche enregistrerDouche(Douche douche) {
+        // Calcul du dépassement (si besoin)
         int duree = douche.getDuree();
         int depassement = Math.max(0, duree - 300);
         douche.setTempsDepasse(depassement);
 
         Douche saved = doucheRepository.save(douche);
 
+        // Met à jour le temps total utilisateur
         if (saved.getUser() != null) {
             Long userId = saved.getUser().getId();
             int total = doucheRepository.findByUserId(userId)
@@ -40,7 +46,15 @@ public class DoucheService {
         return saved;
     }
 
-    public List<Douche> getAll() {
+    public List<Douche> getAllDouches() {
         return doucheRepository.findAll();
+    }
+
+    public Optional<Douche> getDoucheById(Long id) {
+        return doucheRepository.findById(id);
+    }
+
+    public List<Douche> getDouchesByUser(User user) {
+        return doucheRepository.findByUser(user);
     }
 }
