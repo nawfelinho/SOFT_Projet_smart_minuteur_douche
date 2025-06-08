@@ -37,8 +37,14 @@ public class UserService {
         });
     }
 
-    //intégration BLE
+    // Méthode utilisée pour retrouver un utilisateur par son nom (nom = champ dans User.java)
     public Optional<User> getUserByNom(String nom) {
         return userRepository.findByNom(nom);
+    }
+
+    public Optional<User> getUserByName(String name) {
+
+        return userRepository.findByNom(name);
+
     }
 }

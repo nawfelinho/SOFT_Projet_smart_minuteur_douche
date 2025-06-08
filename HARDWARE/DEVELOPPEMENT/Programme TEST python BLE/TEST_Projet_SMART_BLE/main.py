@@ -40,24 +40,24 @@ def parse_ble_message(msg):
 
 # === GESTION DES NOTIFICATIONS BLE ===
 def notification_handler(sender, data):
-    """
-    Callback appelée automatiquement lors de la réception d’une notification BLE.
-    """
     msg = data.decode(errors='ignore')
     print(f"🔔 Notification reçue : {msg}")
     user, time_s = parse_ble_message(msg)
 
     if user and time_s is not None:
-        payload = {"user": user, "timeSeconds": time_s}
         try:
-            # Envoi de la donnée vers le backend
-            resp = requests.post(BACKEND_URL, json=payload)
-            print("Donnée envoyée au backend :", resp.status_code)
+            r = requests.get(f"http://localhost:8080/users/username/{user}")
+            if r.status_code == 200:
+                user_id = r.json()["id"]
+                payload = {"userId": user_id, "timeSeconds": time_s}
+                resp = requests.post(BACKEND_URL, json=payload)
+                print("✅ Donnée envoyée au backend :", resp.status_code)
+            else:
+                print("❌ Utilisateur non trouvé dans le backend :", user)
         except Exception as e:
-            print("Erreur d’envoi HTTP :", e)
-    else:
-        print("Message BLE non reconnu, ignoré.")
+            print("❌ Erreur HTTP vers backend :", e)
 
+                
 # === CONNEXION ET ABONNEMENT AUX NOTIFICATIONS BLE ===
 async def connect_ble():
     """

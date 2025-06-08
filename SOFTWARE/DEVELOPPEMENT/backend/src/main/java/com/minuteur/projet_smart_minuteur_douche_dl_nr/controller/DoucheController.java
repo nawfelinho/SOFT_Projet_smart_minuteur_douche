@@ -6,6 +6,7 @@ import com.minuteur.projet_smart_minuteur_douche_dl_nr.model.User;
 import com.minuteur.projet_smart_minuteur_douche_dl_nr.service.DoucheService;
 import com.minuteur.projet_smart_minuteur_douche_dl_nr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,6 @@ import java.util.Optional;
 @RequestMapping("/douches")
 @CrossOrigin
 public class DoucheController {
-
     @Autowired
     private DoucheService doucheService;
 
@@ -24,25 +24,29 @@ public class DoucheController {
     private UserService userService;
 
     @PostMapping
-    public Douche enregistrerDouche(@RequestBody DoucheDTO dto) {
-        // 1. Cherche l'utilisateur par son id
-        User user = userService.getUserById(dto.userId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé: " + dto.userId));
+    public ResponseEntity<Douche> enregistrerDouche(@RequestBody DoucheDTO dto) {
+        Long userId = dto.userId;
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        // 2. Calcule les dates (ici on fait simple : date début = maintenant - durée)
-        LocalDateTime now = LocalDateTime.now();
+        Optional<User> userOpt = userService.getUserById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
 
-        Douche douche = new Douche();
-        douche.setUser(user);
-        douche.setDateDebut(now.minusSeconds(dto.timeSeconds));
-        douche.setDateFin(now);
-        douche.setDuree(dto.timeSeconds);
-        // Le dépassement sera calculé dans le service
+        User user = userOpt.get();
 
-        // 3. Enregistre la douche
-        return doucheService.enregistrerDouche(douche);
+        Douche douche = Douche.builder()
+                .user(user)
+                .dateDebut(LocalDateTime.now())
+                .dateFin(LocalDateTime.now().plusSeconds(dto.timeSeconds))
+                .duree(dto.timeSeconds)
+                .tempsDepasse(0)
+                .build();
+
+        return ResponseEntity.ok(doucheService.enregistrerDouche(douche));
     }
-
     @GetMapping
     public List<Douche> getAllDouches() {
         return doucheService.getAllDouches();

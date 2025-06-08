@@ -3,6 +3,7 @@ package com.minuteur.projet_smart_minuteur_douche_dl_nr.controller;
 import com.minuteur.projet_smart_minuteur_douche_dl_nr.model.User;
 import com.minuteur.projet_smart_minuteur_douche_dl_nr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity; // ✅ Import manquant
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,12 @@ public class UserController {
         return userService.createUser(user);
     }
 
+    @GetMapping("/username/{name}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String name) {
+        Optional<User> user = userService.getUserByName(name);
+        return user.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     @GetMapping
     public List<User> getAllUsers() {

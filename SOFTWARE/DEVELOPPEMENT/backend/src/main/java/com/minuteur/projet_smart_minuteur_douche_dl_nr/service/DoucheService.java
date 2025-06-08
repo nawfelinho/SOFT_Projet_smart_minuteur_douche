@@ -57,4 +57,9 @@ public class DoucheService {
     public List<Douche> getDouchesByUser(User user) {
         return doucheRepository.findByUser(user);
     }
+
+    public Douche save(Douche douche) {
+        return doucheRepository.save(douche);
+
+    }
 }
