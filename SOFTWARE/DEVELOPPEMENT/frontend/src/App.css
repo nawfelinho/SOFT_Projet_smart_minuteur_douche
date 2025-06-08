@@ -1,38 +1,258 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+body {
+  background: #f7fafd;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  color: #222;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Titres principaux */
+h1, h2, h3 {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  color: #333;
+  margin-top: 0.5em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+h1 {
+  font-size: 2.3rem;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+h2 {
+  font-size: 1.45rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+h2 span[role="img"] {
+  font-size: 1.3em;
+  margin-right: 8px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Cartes et sections */
+.card, .conseil-card, .objectif-card, .stat-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 24px 0 rgba(40,120,190,0.07);
+  padding: 1.8rem 2.1rem 1.6rem 2.1rem;
+  margin: 2.3rem auto 2rem auto;
+  max-width: 850px;
+}
+
+.conseil-card {
+  background: linear-gradient(95deg, #e8f6fe 60%, #fff 100%);
+  border-left: 6px solid #009ee0;
+  margin-top: 2.7rem;
+  padding: 1.3rem 1.6rem 1.1rem 2.1rem;
+}
+
+.objectif-card {
+  background: #f8f8f8;
+  border-left: 6px solid #8c52ff;
+  margin-bottom: 1.7rem;
+  padding: 1.1rem 1.6rem 1.1rem 2.1rem;
+}
+
+.stat-card {
+  background: #f6fafd;
+  border: 1px solid #cbe7fb;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1.4rem 2.1rem;
+}
+
+.stat-card strong {
+  font-size: 1.14rem;
+}
+
+ul, li {
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+
+ul {
+  margin-left: 1.1rem;
+}
+
+button {
+  background: linear-gradient(95deg, #009ee0 60%, #00bfff 100%);
+  color: #fff;
+  border: none;
+  font-size: 1.08rem;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 10px 32px;
+  box-shadow: 0 2px 16px 0 rgba(40,120,190,0.09);
+  margin-top: 12px;
+  margin-bottom: 10px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+button:hover {
+  background: linear-gradient(95deg, #00bfff 55%, #005b8f 100%);
+  box-shadow: 0 4px 24px 0 rgba(0,190,255,0.17);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Tableau des douches */
+table {
+  border-collapse: collapse;
+  width: 95%;
+  margin: 2.2rem auto 2.5rem auto;
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 3px 18px 0 rgba(40,120,190,0.05);
+  overflow: hidden;
+}
+
+table th, table td {
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 1rem;
+  border-bottom: 1px solid #d5e6f7;
+}
+
+table thead th {
+  background: #e6f2fb;
+  font-weight: 600;
+  font-size: 1.07rem;
+  color: #0c3f63;
+  letter-spacing: 0.02em;
+}
+
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+table tr:hover {
+  background: #f2f7fb;
+}
+
+@media (max-width: 700px) {
+  .card, .conseil-card, .stat-card, .objectif-card {
+    padding: 1rem;
+    max-width: 99vw;
   }
-  to {
-    transform: rotate(360deg);
+  table {
+    width: 99vw;
+    font-size: 0.93rem;
   }
+}
+
+/* Graphiques (Chart.js) */
+div[class*='chart-container'], .chart-canvas, .chartjs-render-monitor {
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 2px 12px 0 rgba(50,90,140,0.07);
+  padding: 1.4rem 1.5rem;
+  margin: 1.5rem auto;
+}
+
+/* Bilans */
+.bilan-annuel {
+  background: #eaf8f6;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-top: 40px;
+  margin-bottom: 50px;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 12px 0 rgba(72,180,160,0.08);
+}
+
+.bilan-annuel h3 {
+  color: #298b91;
+  font-size: 1.25rem;
+  margin-bottom: 1.2rem;
+}
+
+.bilan-annuel p {
+  margin: 0.4rem 0;
+  line-height: 1.6;
+}
+
+/* Etiquettes et chips */
+.status-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.97rem;
+  font-weight: 600;
+  background: #d7fbe9;
+  color: #1a9c32;
+  margin-left: 6px;
+}
+
+/* Section "Prévisions" verrouillée */
+.section-locked {
+  filter: blur(1px);
+  position: relative;
+}
+.section-locked .lock-icon {
+  position: absolute;
+  top: 8px;
+  right: 24px;
+  font-size: 25px;
+  color: #888;
+}
+
+/* Responsive title */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.23rem;
+  }
+  h2 {
+    font-size: 1rem;
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b2e6fd;
+  border-radius: 8px;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  background: #e6faff;
+}
+
+/* Inputs, select (si besoin) */
+input, select {
+  border: 1.5px solid #b6e3ff;
+  background: #f8fbfd;
+  padding: 7px 13px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border 0.2s;
+  margin: 6px 0;
+}
+input:focus, select:focus {
+  border: 1.5px solid #009ee0;
+  outline: none;
+}
+
+/* Messages d’info/alerte/succès */
+.info-message {
+  background: #e8f6fe;
+  color: #04628b;
+  border-left: 6px solid #009ee0;
+  border-radius: 8px;
+  padding: 13px 18px;
+  margin: 1.6rem 0;
+}
+
+.success-message {
+  background: #d7fbe9;
+  color: #1a9c32;
+  border-left: 6px solid #1a9c32;
+  border-radius: 8px;
+  padding: 13px 18px;
+  margin: 1.6rem 0;
 }
